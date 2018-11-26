@@ -32,7 +32,10 @@ namespace WebApplication1
                 obj.ConnectString = "server=127.0.0.1,1401;database=Serilog;uid=sa;pwd=hTrlq20181123!;";
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(options =>
+            {
+                options.Filters.Add<LoggerFilrter>();
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
