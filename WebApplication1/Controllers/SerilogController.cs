@@ -61,6 +61,7 @@ namespace WebApplication1.Controllers
         }
 
         [ResponseException]
+        [Logger]
         [HttpGet("TestException")]
         public void TestException()
         {

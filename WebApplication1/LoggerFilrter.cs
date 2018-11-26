@@ -1,21 +1,16 @@
 ﻿using System;
 using LoggerUtil;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WebApplication1
 {
-    public class LoggerFilrter: IExceptionFilter
+    public class LoggerAttribute: ActionFilterAttribute, IExceptionFilter
     {
-        private ISeriLogger Logger { get; }
-
-        public LoggerFilrter(ISeriLogger logger)
-        {
-            Logger = logger;
-        }
-
         public void OnException(ExceptionContext context)
         {
-            Logger.Error(context.Exception);
+            var logger = context.HttpContext.RequestServices.GetRequiredService(typeof(ISeriLogger)) as ISeriLogger;
+            logger.Error(context.Exception.InnerException);
         }
     }
 }
