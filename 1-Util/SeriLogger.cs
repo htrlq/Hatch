@@ -5,6 +5,7 @@ using Serilog.Core.Enrichers;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using Serilog.Core;
 
@@ -13,8 +14,6 @@ namespace LoggerUtil
 
     public class SeriLogger: ISeriLogger
     {
-        public static readonly LoggerConfiguration Instance = new LoggerConfiguration();
-
         private LoggerBuild LoggerBuild { get; }
         private TableBuild TableBuild { get; }
         private SeriLoggerConfigure Options { get; }
@@ -48,7 +47,7 @@ namespace LoggerUtil
         private Logger Build<T>()
         {
             var type = typeof(T);
-            Logger logger;
+            Logger logger;            
 
             if (!TableBuild.ContainsKey(type))
             {
@@ -57,11 +56,12 @@ namespace LoggerUtil
                 if (!addNewTable)
                     throw new TypeInitializationException(typeof(T).FullName, new Exception("Add New Table Error"));
 
-                var isObject = typeof(Object) == type;
+                var isObject = typeof(Exception) == type;
+                var instance = new LoggerConfiguration();
 
                 if (Options.IsSeq)
                 {
-                    logger = Instance?
+                    logger = instance?
                         .MinimumLevel.Verbose()
                         //.Enrich.WithProperty(RootProperty, null)
                         .Enrich.FromLogContext()
@@ -70,7 +70,7 @@ namespace LoggerUtil
                 }
                 else
                 {
-                    ColumnOptions columnOptions;
+                    ColumnOptions columnOptions = null;
                     if (!isObject)
                     {
                         columnOptions = new ColumnOptions()
@@ -81,12 +81,8 @@ namespace LoggerUtil
 
                         columnOptions.Store.Add(StandardColumn.LogEvent);
                     }
-                    else
-                    {
-                        columnOptions = new ColumnOptions();
-                    }
 
-                    logger = Instance?
+                    logger = instance?
                         .MinimumLevel.Verbose()
                         .Enrich.FromLogContext()
                         .WriteTo.MSSqlServer(connectionString: Options.ConnectString, tableName: type.Name, restrictedToMinimumLevel: LogEventLevel.Debug, formatProvider: null, autoCreateSqlTable: true, columnOptions: columnOptions)
@@ -108,25 +104,25 @@ namespace LoggerUtil
 
         public void Error(Exception ex, string messageTemplate = "")
         {
-            var logger = Build<Object>();
+            var logger = Build<Exception>();
             logger.Error(ex, messageTemplate);
         }
 
         public void Fatal(Exception ex, string messageTemplate = "")
         {
-            var logger = Build<Object>();
+            var logger = Build<Exception>();
             logger.Fatal(ex, messageTemplate);
         }
 
         public void Debug(Exception ex, string messageTemplate = "")
         {
-            var logger = Build<Object>();
+            var logger = Build<Exception>();
             logger.Debug(ex, messageTemplate);
         }
 
         public void Information(Exception ex, string messageTemplate = "")
         {
-            var logger = Build<Object>();
+            var logger = Build<Exception>();
             logger.Information(ex, messageTemplate);
         }
     }

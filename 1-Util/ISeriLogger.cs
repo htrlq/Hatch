@@ -9,12 +9,12 @@ namespace LoggerUtil
 
         void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue);
 
-        void Error(Exception ex, string messageTemplate);
+        void Error(Exception ex, string messageTemplate = "");
 
-        void Fatal(Exception ex, string messageTemplate);
+        void Fatal(Exception ex, string messageTemplate = "");
 
-        void Debug(Exception ex, string messageTemplate);
+        void Debug(Exception ex, string messageTemplate = "");
 
-        void Information(Exception ex, string messageTemplate);
+        void Information(Exception ex, string messageTemplate = "");
     }
 }
