@@ -72,7 +72,7 @@ namespace WebApplication1
                     obj.Seq = new SeqConfiguration()
                     {
                         Url = "http://127.0.0.1:5341",
-                        ApiKey = "tDRG8Ip61nALAATE0bDe"
+                        ApiKey = "sacPmoyNrEqQTONHagvd"
                     };
                 })
                 .UseSeriLogger<ContextB>(obj =>
@@ -80,7 +80,7 @@ namespace WebApplication1
                     obj.Seq = new SeqConfiguration()
                     {
                         Url = "http://127.0.0.1:5341",
-                        ApiKey = "2yhBCsKsvR5WH0GoB0b0"
+                        ApiKey = "z6FhLBHDHuYkTWA9eeDE"
                     };
                 });
 
