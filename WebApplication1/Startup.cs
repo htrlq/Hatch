@@ -14,6 +14,20 @@ using Microsoft.Extensions.Options;
 
 namespace WebApplication1
 {
+    public class ContextA : SeriLogger
+    {
+        public ContextA(SeriLoggerConfiguraBuild configuraBuild, TableBuild build, LoggerBuild loggerBuild) : base(configuraBuild, build, loggerBuild)
+        {
+        }
+    }
+
+    public class ContextB : SeriLogger
+    {
+        public ContextB(SeriLoggerConfiguraBuild configuraBuild, TableBuild build, LoggerBuild loggerBuild) : base(configuraBuild, build, loggerBuild)
+        {
+        }
+    }
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -26,11 +40,11 @@ namespace WebApplication1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSeriLogger(obj =>
-            {
-                obj.SeqUrl = "http://127.0.0.1:5341";
-                //obj.ConnectString = "server=127.0.0.1,1401;database=Serilog;uid=sa;pwd=hTrlq20181123!;";
-            });
+            services.AddSeriLogger();
+
+            services
+                .AddSeriLoggerContextPool<ContextA>()
+                .AddSeriLoggerContextPool<ContextB>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -46,6 +60,29 @@ namespace WebApplication1
             {
                 app.UseHsts();
             }
+
+            app
+                .UseSeriLogger<SeriLogger>(obj =>
+                {
+                    obj.Seq = "http://127.0.0.1:5341";
+                    //obj.ConnectString = "server=127.0.0.1,1401;database=Serilog;uid=sa;pwd=hTrlq20181123!;";
+                })
+                .UseSeriLogger<ContextA>(obj =>
+                {
+                    obj.Seq = new SeqConfiguration()
+                    {
+                        Url = "http://127.0.0.1:5341",
+                        ApiKey = "tDRG8Ip61nALAATE0bDe"
+                    };
+                })
+                .UseSeriLogger<ContextB>(obj =>
+                {
+                    obj.Seq = new SeqConfiguration()
+                    {
+                        Url = "http://127.0.0.1:5341",
+                        ApiKey = "2yhBCsKsvR5WH0GoB0b0"
+                    };
+                });
 
             app.UseHttpsRedirection();
             app.UseMvc();

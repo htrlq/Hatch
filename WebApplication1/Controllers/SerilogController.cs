@@ -11,21 +11,30 @@ namespace WebApplication1.Controllers
     public class SerilogController : ControllerBase
     {
         private ISeriLogger Log { get; }
+        private ContextA ContextA { get; }
+        private ContextB ContextB { get; }
 
-        public SerilogController(ISeriLogger log)
+        public SerilogController(ISeriLogger log, ContextA contextA, ContextB contextB)
         {
             Log = log;
+            ContextA = contextA;
+            ContextB = contextB;
         }
 
         // GET api/values
         [HttpGet]
         public string Write()
         {
-            Log.Write(LogEventLevel.Debug, "", new UserModel()
+            var model = new UserModel()
             {
                 User = "admin",
                 Account = "system"
-            });
+            };
+
+            Log.Write(LogEventLevel.Debug, "", model);
+            ContextA.Write(LogEventLevel.Debug, "", model);
+            ContextB.Write(LogEventLevel.Debug, "", model);
+
             return "Write";
         }
 
